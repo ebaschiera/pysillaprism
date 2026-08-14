@@ -23,6 +23,7 @@ from .const import (
     SETTABLE_MODES,
     CommandResult,
     InputEvent,
+    PortError,
     PortMode,
     PortState,
 )
@@ -46,6 +47,7 @@ __all__ = [
     "CommandResult",
     "HelloInfo",
     "InputEvent",
+    "PortError",
     "PortMode",
     "PortState",
     "PrismCommandError",

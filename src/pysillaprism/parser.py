@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from .const import (
     CommandResult,
     InputEvent,
+    PortError,
     PortMode,
     PortState,
 )
@@ -90,6 +91,16 @@ def _to_mode(payload: str) -> PortMode:
         raise PrismParseError(f"unknown port mode {payload!r}") from err
 
 
+def _to_error(payload: str) -> PortError | int:
+    # Unlike states and modes, undocumented error codes must survive parsing:
+    # dropping them would hide a fault instead of reporting it.
+    code = _to_int(payload)
+    try:
+        return PortError(code)
+    except ValueError:
+        return code
+
+
 #: Per-port single-segment topics: firmware name -> (status attribute, coercer).
 _PORT_FIELDS: dict[str, tuple[str, Callable[[str], object]]] = {
     "state": ("state", _to_state),
@@ -102,7 +113,7 @@ _PORT_FIELDS: dict[str, tuple[str, Callable[[str], object]]] = {
     "session_time": ("session_time", _to_int),
     "wh": ("session_energy", _to_float),
     "wh_total": ("total_energy", _to_float),
-    "error": ("error", _to_int),
+    "error": ("error", _to_error),
 }
 
 #: ``energy_data/<name>`` topics -> status attribute on :class:`PrismEnergyData`.

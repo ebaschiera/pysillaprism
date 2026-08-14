@@ -7,6 +7,7 @@ import pytest
 from pysillaprism import (
     CommandResult,
     InputEvent,
+    PortError,
     PortMode,
     PortState,
     PrismParseError,
@@ -33,7 +34,7 @@ REAL_STATUS = [
     ("prism/1/volt", "236.0", "port", "voltage", 236.0, 1),
     ("prism/1/w", "0", "port", "power", 0.0, 1),
     ("prism/1/wh_total", "719800", "port", "total_energy", 719800.0, 1),
-    ("prism/1/error", "0", "port", "error", 0, 1),
+    ("prism/1/error", "0", "port", "error", PortError.NONE, 1),
     ("prism/1/mode", "2", "port", "mode", PortMode.NORMAL, 1),
     ("prism/1/session_time", "16030", "port", "session_time", 16030, 1),
     ("prism/energy_data/power_grid", "3", "energy", "power_grid", 3.0, None),
@@ -154,3 +155,10 @@ def test_malformed_number_raises():
 def test_unknown_state_value_raises():
     with pytest.raises(PrismParseError):
         parse_message(BASE, "prism/1/state", "99")
+
+
+def test_undocumented_error_code_is_kept_as_int():
+    parsed = parse_message(BASE, "prism/1/error", "12")
+    assert isinstance(parsed, StatusUpdate)
+    assert parsed.value == 12
+    assert not isinstance(parsed.value, PortError)

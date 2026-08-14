@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .const import CommandResult, InputEvent, PortMode, PortState
+from .const import CommandResult, InputEvent, PortError, PortMode, PortState
 
 
 @dataclass(slots=True)
@@ -43,8 +43,10 @@ class PrismPortStatus:
     session_energy: float | None = None
     #: ``wh_total`` topic — lifetime energy delivered, in watt-hours.
     total_energy: float | None = None
-    #: ``error`` topic — port error code (``0`` means no error).
-    error: int | None = None
+    #: ``error`` topic — port error code. A :class:`~pysillaprism.PortError`
+    #: member for the documented codes, a plain ``int`` for the undocumented
+    #: fault codes.
+    error: PortError | int | None = None
 
 
 @dataclass(slots=True)

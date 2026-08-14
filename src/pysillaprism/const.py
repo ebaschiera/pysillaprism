@@ -34,6 +34,18 @@ class PortState(IntEnum):
     """Charging paused."""
 
 
+class PortError(IntEnum):
+    """Value of the ``<port>/error`` topic.
+
+    The MQTT manual only documents ``0``. The fault codes the firmware reports
+    are not specified, so they are left as plain integers until Silla documents
+    them or they are observed in the field.
+    """
+
+    NONE = 0
+    """No error."""
+
+
 class PortMode(IntEnum):
     """Value of the ``<port>/mode`` topic.
 

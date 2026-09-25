@@ -130,13 +130,24 @@ _HELLO_RE = re.compile(
 )
 
 
+#: Firmware 4.x names the serial explicitly, after the product name.
+_HELLO_SERIAL_RE = re.compile(r"\(serial\s+(?P<serial>[^)\s]+)\)")
+
+
 def parse_hello(payload: str) -> HelloInfo:
-    """Parse a ``hello`` payload such as ``"Prism-A00006 3.2.77 (evsemd v1.1.1)"``."""
+    """Parse a ``hello`` payload.
+
+    Firmware 3.x announces ``"Prism-A00006 3.2.77 (evsemd v1.1.1)"``, with the
+    serial as the first token. Firmware 4.x announces
+    ``"Silla-Prism 4.4.4 (mqtt:user_v1) (serial A00006)"``, where the first
+    token is the product name and the serial has its own parenthesis.
+    """
     match = _HELLO_RE.match(payload.strip())
     if not match or not match.group("serial"):
         raise PrismParseError(f"unrecognised hello payload {payload!r}")
+    serial_match = _HELLO_SERIAL_RE.search(payload)
     return HelloInfo(
-        serial=match.group("serial"),
+        serial=serial_match.group("serial") if serial_match else match.group("serial"),
         sw_version=match.group("sw"),
         evsemd_version=match.group("evsemd"),
         raw=payload,

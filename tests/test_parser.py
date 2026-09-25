@@ -75,6 +75,13 @@ def test_hello_full():
     assert parsed.info.evsemd_version == "1.1.1"
 
 
+def test_hello_firmware_4():
+    info = parse_hello("Silla-Prism 4.4.4 (mqtt:user_v1) (serial A00006)")
+    assert info.serial == "A00006"
+    assert info.sw_version == "4.4.4"
+    assert info.evsemd_version is None
+
+
 def test_hello_v1_style():
     info = parse_hello("Cartender-Prism 1.4 (evsemd v1.0.0)")
     assert info.serial == "Cartender-Prism"

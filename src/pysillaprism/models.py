@@ -70,7 +70,9 @@ class PrismEnergyData:
 class HelloInfo:
     """Parsed ``hello`` announcement, sent by Prism when it (re)connects.
 
-    Example payload: ``"Prism-A00006 3.2.77 (evsemd v1.1.1)"``.
+    Example payloads: ``"Prism-A00006 3.2.77 (evsemd v1.1.1)"`` (firmware
+    3.x) and ``"Silla-Prism 4.4.4 (mqtt:user_v1) (serial A00006)"`` (firmware
+    4.x).
     """
 
     serial: str
